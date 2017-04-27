@@ -1,17 +1,28 @@
-class Anime(object):
-    def __init__(self, nombre, descripcion, tags):
-        self.nombre = nombre
-        self.descripcion = descripcion
-        self.tags = tags
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+
+engine = create_engine('sqlite:///animes.db', echo=True)
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
+
+
+class Anime(Base):
+    __tablename__ = 'animes'
+
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String, unique=True)
+    descripcion = Column(String)
 
     def to_json(self):
         return {
+            'id': self.id,
             'nombre': self.nombre,
-            'descripcion': self.descripcion,
-            'tags': self.tags
+            'descripcion': self.descripcion
         }
 
+
 def animes():
-    return [
-        Anime('Naruto', 'blah', ['pelea', 'shonen']).to_json()
-    ]
+    session = Session()
+    return [ anime.to_json() for anime in session.query(Anime).all() ]
