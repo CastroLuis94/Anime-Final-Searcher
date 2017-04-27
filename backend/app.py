@@ -1,10 +1,14 @@
-from flask import Flask
+from flask import Flask, jsonify
+from sources import animes
 
 app = Flask(__name__)
 
 @app.route('/')
 def root():
-    return 'holis'
+    return jsonify({
+        'status': 200,
+        'animes': animes()
+    })
 
 
 if __name__ == '__main__':
