@@ -23,6 +23,13 @@ class Anime(Base):
             'descripcion': self.descripcion
         }
 
+    def __repr__(self):
+        return "<Anime[{0}] nombre='{1}' descipcion='{2}...'>".format(
+            self.id,
+            self.nombre,
+            self.descripcion[:20]
+        )
+
 
 def animes():
     session = Session()
