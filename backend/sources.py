@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Index
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -12,8 +12,9 @@ class Anime(Base):
     __tablename__ = 'animes'
 
     id = Column(Integer, primary_key=True)
-    nombre = Column(String, unique=True)
+    nombre = Column(String)
     descripcion = Column(String)
+    idx_nombre_descripcion = Index('idx_nombre_descripcion', nombre, descripcion, unique=True)
 
     def to_json(self):
         return {
