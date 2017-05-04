@@ -25,4 +25,12 @@ class Anime(Base):
 
 def animes():
     session = Session()
-    return [ anime.to_json() for anime in session.query(Anime).all() ]
+    return [anime.to_json()
+            for anime in session.query(Anime).all()]
+
+def animes_por_letra(letra):
+    session = Session()
+    return [anime.to_json()
+            for anime in session.query(Anime).filter(
+                Anime.nombre.like('{0}%'.format(letra))
+            ).all()]
