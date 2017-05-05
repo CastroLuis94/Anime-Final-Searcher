@@ -26,14 +26,15 @@ class Anime(Base):
             'id': self.id,
             'nombre': self.nombre,
             'descripcion': self.descripcion,
-            'tags': self.tags
+            'tags': [ tag.nombre for tag in self.tags ]
         }
 
     def __repr__(self):
-        return "<Anime[{0}] nombre='{1}' descipcion='{2}...'>".format(
+        return "<Anime[{0}] nombre='{1}' descipcion='{2}' tags=[{3}]>".format(
             self.id,
             self.nombre,
-            self.descripcion[:20]
+            "{0}...".format(self.descripcion[:20]) if self.descripcion is not None else '',
+            ', '.join("'{0}'".format(tag.nombre) for tag in self.tags)
         )
 
 class Tag(Base):
@@ -42,7 +43,13 @@ class Tag(Base):
     id = Column(Integer, primary_key=True)
     nombre = Column(String, unique=True)
     animes = relationship("Anime", secondary='animes_tags', viewonly=True)
-    
+
+    def __repr__(self):
+        return "<Tag[{0}] nombre='{1}'>".format(
+            self.id,
+            self.nombre
+        )
+
 
 class AnimeTag(Base):
     __tablename__ = 'animes_tags'
@@ -50,6 +57,8 @@ class AnimeTag(Base):
     id = Column(Integer, primary_key=True)
     anime_id = Column(Integer, ForeignKey('animes.id'))
     tag_id = Column(Integer, ForeignKey('tags.id'))
+    anime = relationship("Anime")
+    tag = relationship("Tag")
 
     idx_anime_tag = Index('idx_anime_tag', anime_id, tag_id, unique=True)
 
