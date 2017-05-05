@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine, Column, Integer, String, Index
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
+from unidecode import unidecode
 
 
 engine = create_engine('sqlite:///animes.db', echo=True)
@@ -36,9 +38,30 @@ def animes():
     return [anime.to_json()
             for anime in session.query(Anime).all()]
 
+
 def animes_por_letra(letra):
     session = Session()
     return [anime.to_json()
             for anime in session.query(Anime).filter(
                 Anime.nombre.like('{0}%'.format(letra))
             ).all()]
+
+
+def animes_agrupados_por_letra():
+    animes = {}
+
+    session = Session()
+    for letra, anime in session.query(func.substr(Anime.nombre, 1, 1), Anime).all():
+        letra = unidecode(letra.lower())
+
+        if letra in [str(i) for i in range(0, 10)]:
+            if '0-9' not in animes:
+                animes['0-9'] = []
+            animes['0-9'].append(anime.to_json())
+            continue
+
+        if letra not in animes:
+            animes[letra] = []
+        animes[letra].append(anime.to_json())
+
+    return animes
