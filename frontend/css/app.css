@@ -1,3 +1,60 @@
+html {
+    background: none;
+  
+}
+
 #series li {
     list-style: none;
+}
+
+body {
+    background: url(fondo.jpg);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+   
+}
+
+.letra a {
+    color: #dedede;
+}
+
+.letra a:hover {
+    color: #33aaff;
+}
+
+.card {
+    opacity: 0.65;
+}
+
+.tabs a{
+	color: #dedede;
+}
+
+.tabs a:hover {
+    color: #33aaff;
+}
+.introduccion {
+	margin-left: 250px;
+	margin-right: 250px;
+}
+
+
+.tabs.is-toggle li.is-active a {
+    background-color: #00d1b2;
+    border-color: #00d1b2;
+    color: #fff;
+    z-index: 1;
+}
+
+.table {
+    opacity: 0.75;
+}
+
+.table tr:hover {
+    color :#ffffff;
+    background:#00d1b2;
+}
+.table tr:hover a {
+    color :#ffffff;
+    background:#00d1b2;
 }
