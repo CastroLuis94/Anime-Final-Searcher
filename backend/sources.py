@@ -1,8 +1,9 @@
 from sqlalchemy import create_engine, Column, Integer, String, Index, ForeignKey
-from sqlalchemy.orm import sessionmaker, relationship, backref
+from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 from unidecode import unidecode
+from utils import hash_
 
 
 engine = create_engine('sqlite:///animes.db', echo=True)
@@ -63,6 +64,45 @@ class AnimeTag(Base):
     idx_anime_tag = Index('idx_anime_tag', anime_id, tag_id, unique=True)
 
 
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True)
+    _password = Column(String)
+    animes = relationship("Anime", secondary='users_animes', viewonly=True)
+
+    def __init__(self, *args, **kwargs):
+        for p in ['password', '_password']:
+            if p in kwargs:
+                self._password = hash_(kwargs[p])
+                del(kwargs[p])
+        super(User, self).__init__(*args, **kwargs)
+
+    def authenticate(self, pass_):
+        return self.password == hash_(pass_)
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, pass_):
+        self._password = hash_(pass_)
+
+
+class UserAnime(Base):
+    __tablename__ = 'users_animes'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    anime_id = Column(Integer, ForeignKey('animes.id'))
+    users = relationship("User")
+    anime = relationship("Anime")
+
+    idx_anime_user = Index('idx_anime_user', anime_id, user_id, unique=True)
+
+
 def animes():
     session = Session()
     return [anime.to_json()
@@ -95,3 +135,22 @@ def animes_agrupados_por_letra():
         animes[letra].append(anime.to_json())
 
     return animes
+
+def crear_usuario(username, password):
+    session = Session()
+
+    try:
+        user = User(username=username, password=password)
+        session.add(user)
+        session.commit()
+        return user
+    except:
+        return False
+
+def autenticar_usuario(username, password):
+    session = Session()
+
+    user = session.query(User).filter_by(username=username).first()
+    if user and user.authenticate(password):
+        return user
+    return False
