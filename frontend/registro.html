@@ -63,18 +63,21 @@
     <div class="card">
           <div class="introduccion">
               <div class="content">
-                 <p class="title" >Inicio de sesion.</p>
+                 <p class="title" >Nombre de Usurio.</p>
                  <div class="field">
-                  <label class="label">Nombre de Usuario.</label>
+                  <label class="label">ID.</label>
                   <p class="control">
                     <input class="input" type="text" placeholder="Ingrese su nickname.">
                   </p>
                   </div>
                 <br>
                 <div class="field">
-                  <label class="label">Contrase&ntildea.</label>
+                  <label class="label"  >Contraseña.</label>
+                  
                   <p class="control">
-                    <input class="input" type="password" placeholder="Ingrese su Contrase&ntilde a">
+                    <input class="input" id="contra"  type="password" placeholder="Ingrese su Contrase&ntilde a">
+                  <div id ="validarContra">  </div>
+                    
                   </p>
                 </div>
               </div>
@@ -86,22 +89,70 @@
                 </label>
               </p>
             </div>
-             <div class="field">
-              <a href="registro.html">
-                   Registrarse.
-               
-              </a>
-            </div>
+             
             <div class="block">
-              <a class="button is-primary">Iniciar sesion.</a>
+              <a class="button is-primary" onclick="return validarContra()" >Crear cuenta.</a>
             </div>
           </div>
    </div>
   </div>
         
- 
+ <script>
+  
    
-
+  function tieneNumeros(){
+    var contrasenia = document.getElementById("contra").value;
+      var numeros = [0,1,2,3,4,5,6,7,8,9];
+      var i = 0;
+      contra = contrasenia;
+      while(i < contra.length){
+        var k = 0;
+        while(k < numeros.length){
+          if(String(numeros[k]) == contra[i]){
+            return true;
+          }
+          k++;
+        }
+        i++;
+      }
+      return false;
+    }
+    function tieneLetras(){
+    var contrasenia = document.getElementById("contra").value;
+      var letras = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','v','w','x','y','z'];
+      var i = 0;
+      contra = contrasenia;
+      while(i < contra.length){
+        var k = 0;
+        while(k < letras.length){
+          if(letras[k] == contra[i].toLowerCase()){
+            return true;
+          }
+          k++;
+        }
+        i++;
+      }
+      return false;
+    }
+  function validarContra(contrasenia){
+    esValida = tieneNumeros() && tieneLetras();
+    var pass = document.getElementById("contra").value;
+    if (pass.length < 8 || pass.length > 16){
+      document.getElementById("validarContra").innerHTML = "La contraseña debe tener de 8 a 16 caracteres."
+      return;
+    }
+    if(esValida){
+      document.getElementById("validarContra").innerHTML = "La Contra es valida."
+    }else{
+      if (tieneLetras(contrasenia)){
+        document.getElementById("validarContra").innerHTML = "La Contra no tiene numeros."
+      }else{
+        document.getElementById("validarContra").innerHTML = "La Contra no tiene letras."
+      }
+    }
+  }
+  </script>
+  
 
 
  
